@@ -1,0 +1,30 @@
+# This repository is a Webmin module written in Perl (the CGIs and helper
+# library under nginx/). It has no test suite, so CI checks that every Perl
+# file still compiles.
+version: 2.1
+
+jobs:
+  perl-syntax:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: Install Perl dependencies
+          command: sudo apt-get update && sudo apt-get install -y libhtml-parser-perl
+      - run:
+          name: Perl syntax check
+          command: |
+            # WebminCore is supplied by Webmin at runtime; stub it so the
+            # syntax check can resolve `use WebminCore;`.
+            mkdir -p /tmp/webmin-stubs
+            printf 'package WebminCore;\n1;\n' > /tmp/webmin-stubs/WebminCore.pm
+            cd nginx
+            for f in *.cgi *.pl; do
+              perl -I/tmp/webmin-stubs -c "$f" || exit 1
+            done
+
+workflows:
+  ci:
+    jobs:
+      - perl-syntax
