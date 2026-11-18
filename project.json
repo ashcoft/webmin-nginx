@@ -1,0 +1,14 @@
+{
+  "name": "webmin-nginx",
+  "$schema": ".nx/installation/node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "nginx",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh tools/check-perl.sh"
+      }
+    }
+  }
+}
